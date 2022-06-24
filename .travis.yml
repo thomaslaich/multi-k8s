@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t chickenmelike/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true chickenmelike/react-test npm test
+
+after_success:
+  - docker build -t chickenmelike/multi-client ./client
+  - docker build -t chickenmelike/multi-nginx ./nginx
+  - docker build -t chickenmelike/multi-server ./server
+  - docker build -t chickenmelike/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push chickenmelike/multi-client
+  - docker push chickenmelike/multi-nginx
+  - docker push chickenmelike/multi-server
+  - docker push chickenmelike/multi-worker
