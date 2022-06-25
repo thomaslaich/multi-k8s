@@ -20,3 +20,15 @@ after_success:
   - docker push chickenmelike/multi-nginx
   - docker push chickenmelike/multi-server
   - docker push chickenmelike/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-west-2"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-us-west-2-363690725477"
+  bucket_path: "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
